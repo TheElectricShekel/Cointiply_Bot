@@ -1,14 +1,16 @@
 # Cointiply_Bot
 This bot will log into Cointiply.com, join the rain pool for additional coins and activate the faucet.   During the faucet cooldown, the bot will periodically check to see if the rain pool has ended, and will rejoin. The browser will need to stay open due to the manner in which the captchas are solved, but can be minimized
 
-Cointiply_Bot
+*Cointiply_Bot
 
 This bot will log into Cointiply.com, join the rain pool for additional coins and activate the faucet.  
 During the faucet cooldown, the bot will periodically check to see if the rain pool has ended, and will rejoin.
 The browser will need to stay open due to the manner in which the captchas are solved, but can be minimized
 
+***Due to the 25MB upload limit on github, the Windows standalone can be downloaded here:***<br>
+	v1.02: https://mega.nz/file/lc5WRbiB#PcklMH_C-LyeV7cH8UT4TBacKyzqvlODNhoEW_Tz_mo
 
-In order to run the bot do the following:
+*In order to run the bot do the following:
 
 Register at: http://cointiply.com/r/EPMAA
 
