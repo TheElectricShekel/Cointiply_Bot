@@ -1,0 +1,11 @@
+#####################################################################################################
+#	DO NOT CHANGE THE FORMATTING OF THIS DOCUMENT.  THE SCRIPT RELIES ON LINE NUMBERS TO BE EXACT.	#
+#																									#
+#	FORMATTING IS AS FOLLOWS: 	sitename.com	(do not make any edits to the site names)			#
+#								e-mail 			(replace the word e-mail with your e-mail)			#
+#								password 		(replace the word password with your password)		#
+#####################################################################################################
+
+http://cointiply.com/r/EPMAA
+e-mail
+password
