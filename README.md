@@ -22,8 +22,9 @@ Open 'creds.txt'<br>
 	- Replace the word password with the password you want to use for the site<br>
 	- Save and exit<br>
 
-Install tesseract-ocr-setup-3.02.02.exe<br>
-	- Set the install dir to: C:\Program Files\Tesseract-OCR\tesseract<br>
+Install tesseract-ocr-w64-setup-v5.0.0-alpha.20201127<br>
+	- Unzip included zip files for installer or download here: https://github.com/UB-Mannheim/tesseract/wiki
+	- Set the install dir to: C:\Program Files\Tesseract-OCR<br>
 
 Run 'Cointiply_Bot.exe'
 	- Make sure you have clicked the verification link in your e-mail<br>
