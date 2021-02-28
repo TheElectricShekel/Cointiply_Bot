@@ -110,44 +110,47 @@ except:
 time.sleep(1)
 
 #roll_button = browser.find_element_by_class_name("md-ink-ripple").click()
-roll_button = browser.find_element_by_xpath("/html/body/div/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div[1]/div/button")
-roll_button.click()
-print("Clicked Roll Button")
+try:
+    roll_button = browser.find_element_by_xpath("/html/body/div/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div[1]/div/button")
+    roll_button.click()
+    print("Clicked Roll Button")
 
-print("Waiting for Captcha...")
-time.sleep(11)
+    print("Waiting for Captcha...")
+    time.sleep(11)
 
-captcha2 = browser.find_element_by_id("adcopy-outer").screenshot("captcha2.png")
-print("Solving Captcha #2...")
-img2 = Image.open("captcha2.png")
-width, height = img2.size
-img_res2 = img2.crop((0, 130, width, height))
-img_res2.save("captcha2.png")
+    captcha2 = browser.find_element_by_id("adcopy-outer").screenshot("captcha2.png")
+    print("Solving Captcha #2...")
+    img2 = Image.open("captcha2.png")
+    width, height = img2.size
+    img_res2 = img2.crop((0, 130, width, height))
+    img_res2.save("captcha2.png")
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
-captcha_string2 = pytesseract.image_to_string("captcha2.png")
-s = captcha_string2
-sliced_captcha2 = s[14:]
-print(sliced_captcha2)
+    captcha_string2 = pytesseract.image_to_string("captcha2.png")
+    s = captcha_string2
+    sliced_captcha2 = s[14:]
+    print(sliced_captcha2)
 
-pyperclip.copy(sliced_captcha2)
+    pyperclip.copy(sliced_captcha2)
 
-captcha_field2 = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/input")
+    captcha_field2 = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/input")
 
-captcha_field2.click()
-time.sleep(2)
+    captcha_field2.click()
+    time.sleep(2)
 
-captcha_field2.send_keys(sliced_captcha2)
-#keyboard.send("ctrl+v")
-print("Captcha Solved")
+    captcha_field2.send_keys(sliced_captcha2)
+    #keyboard.send("ctrl+v")
+    print("Captcha Solved")
 
-time.sleep(2)
+    time.sleep(2)
 
-final_roll = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/button")
-final_roll.click()
-time.sleep(2)
-print("Clicked Roll Button")
+    final_roll = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/button")
+    final_roll.click()
+    time.sleep(2)
+    print("Clicked Roll Button")
+except:
+    print("Countdown timer active")
 
 while True:
     print("Waiting for countdown...")
