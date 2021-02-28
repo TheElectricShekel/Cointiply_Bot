@@ -23,7 +23,7 @@ Open 'creds.txt'<br>
 	- Save and exit<br>
 
 Install tesseract-ocr-w64-setup-v5.0.0-alpha.20201127<br>
-	- Unzip included zip files for installer or download here: https://github.com/UB-Mannheim/tesseract/wiki
+	- Unzip included zip files for installer or download here: https://github.com/UB-Mannheim/tesseract/wiki<br>
 	- Set the install dir to: C:\Program Files\Tesseract-OCR<br>
 
 Run 'Cointiply_Bot.exe'
