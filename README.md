@@ -8,8 +8,10 @@ During the faucet cooldown, the bot will periodically check to see if the rain p
 The browser will need to stay open due to the manner in which the captchas are solved, but can be minimized
 
 ***Due to the 25MB upload limit on github, the Windows standalone must be unzipped from the following parts:***<br>
-	Cointiply_Bot_v1.02_Windows_Dist.zip.001<br>
-	Cointiply_Bot_v1.02_Windows_Dist.zip.002
+	Cointiply_Bot_v1.05.zip.001<br>
+	Cointiply_Bot_v1.05.zip.002<br>
+	Cointiply_Bot_v1.05.zip.003<br>
+	Cointiply_Bot_v1.05.zip.004<br>
 
 **In order to run the bot do the following:**
 
