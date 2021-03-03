@@ -10,6 +10,14 @@ import keyboard
 from random import randrange
 import sys
 import os
+import cv2
+import numpy as np
+from skimage.metrics import structural_similarity
+import argparse
+import imutils
+
+def MAX(ssim_total):
+    return (max(ssim_total))
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 credentials = "creds.txt"
@@ -20,6 +28,13 @@ brave_path = "C:/Program Files/Google/Chrome/Application/chrome.exe"
 with open(credentials) as f:
     creds = f.readlines()
 time.sleep(1)
+
+ads_remaining = True
+ads_viewed = 0
+ad_viewtime = int(ads_viewed) * 20
+ptc_reduced = False
+first_check = 1
+ptc_early = 0
 
 option = webdriver.ChromeOptions()
 option.binary_location = brave_path
@@ -153,381 +168,671 @@ except:
     print("Countdown timer active")
 
 while True:
-    print("Waiting for countdown...")
-    very_human = randrange(180)
-    roll_wait = 3600
-    #total_wait = roll_wait + very_human
-    rain_differential = roll_wait // 10
-    rain_check = 0
-    while rain_check <= 9:
-        for remaining in range(rain_differential, 0, -1):
+    if first_check == 0:
+        print("Waiting for countdown...")
+        very_human = randrange(180)
+        roll_wait = 3600 -- ad_viewtime
+        #total_wait = roll_wait + very_human
+        rain_differential = roll_wait // 10
+        rain_check = 0
+        while rain_check <= 9:
+            for remaining in range(rain_differential, 0, -1):
+                sys.stdout.write("\r")
+                sys.stdout.write("Checking Rain Pool in {:2d} seconds.".format(remaining))
+                sys.stdout.flush()
+                time.sleep(1)
+
+            sys.stdout.write("\rChecking Rain Pool...            \n")
+
+            try:
+                print("Joining Rain Pool...")
+                rain_button = browser.find_element_by_xpath("/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
+                rain_button.click()
+                time.sleep(2)
+                tos_button = browser.find_element_by_xpath("/html/body/div[3]/div[1]/div[3]/button[2]")
+                tos_button.click()
+                print("Rain Pool successfully joined")
+
+            except:
+                print("Error joining Rain Pool - already joined")
+
+            rain_check += 1
+
+        print("Roll Timer complete!")
+
+        for remaining in range(very_human, 0, -1):
             sys.stdout.write("\r")
-            sys.stdout.write("Checking Rain Pool in {:2d} seconds.".format(remaining))
+            sys.stdout.write("Randomizing wait time: {:2d} seconds remaining".format(remaining))
             sys.stdout.flush()
             time.sleep(1)
 
-        sys.stdout.write("\rChecking Rain Pool...            \n")
+        sys.stdout.write("\rRandomized wait time complete!            \n")
+
+        ads_remaining = True
+
+        #countdown = roll_wait + very_human
+        #time.sleep(roll_wait + very_human)
+
+        #browser.refresh()
+        browser.get("https://cointiply.com/home?intent=faucet")
+        time.sleep(3)
 
         try:
             print("Joining Rain Pool...")
-            #try:
-            #    chat_button = browser.find_element_by_xpath(
-            #        "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div[1]/div[3]/label")
-            #    chat_button.click()
-            #    print("Joined Chat")
-            #except:
-            #    print("Chat already joined")
+            chat_button = browser.find_element_by_xpath(
+                "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div[1]/div[3]/label")
+            chat_button.click()
 
-            #time.sleep(5)
+            time.sleep(5)
 
-            rain_button = browser.find_element_by_xpath("/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
+            rain_button = browser.find_element_by_xpath(
+                "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
             rain_button.click()
             time.sleep(2)
-            tos_button = browser.find_element_by_xpath("/html/body/div[3]/div[1]/div[3]/button[2]")
+            tos_button = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[3]/button[2]")
             tos_button.click()
             print("Rain Pool successfully joined")
-
-        except:
+        except Exception as e:
+            print(e)
             print("Error joining Rain Pool - already joined")
 
-        rain_check += 1
-
-    print("Roll Timer complete!")
-
-    for remaining in range(very_human, 0, -1):
-        sys.stdout.write("\r")
-        sys.stdout.write("Randomizing wait time: {:2d} seconds remaining".format(remaining))
-        sys.stdout.flush()
         time.sleep(1)
 
-    sys.stdout.write("\rRandomized wait time complete!            \n")
+        roll_button = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div[1]/div/button")
+        roll_button.click()
+        print("Clicked Roll Button")
 
-    #countdown = roll_wait + very_human
-    #time.sleep(roll_wait + very_human)
+        print("Waiting for Captcha...")
+        time.sleep(10)
 
-    #browser.refresh()
-    browser.get("https://cointiply.com/home?intent=faucet")
-    time.sleep(3)
+        captcha2 = browser.find_element_by_id("adcopy-outer").screenshot("captcha2.png")
+        print("Solving Captcha #2...")
+        img2 = Image.open("captcha2.png")
+        width, height = img2.size
+        img_res2 = img2.crop((0, 130, width, height))
+        img_res2.save("captcha2.png")
 
-    try:
-        print("Joining Rain Pool...")
-        chat_button = browser.find_element_by_xpath(
-            "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div[1]/div[3]/label")
-        chat_button.click()
+        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+
+        captcha_string2 = pytesseract.image_to_string("captcha2.png")
+        s = captcha_string2
+        sliced_captcha2 = s[14:]
+        print(sliced_captcha2)
+
+        pyperclip.copy(sliced_captcha2)
+
+        captcha_field2 = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/input")
+        captcha_field2.click()
+        time.sleep(2)
+        captcha_field2.send_keys(sliced_captcha2)
+        #keyboard.send("ctrl+v")
+        print("Captcha Solved")
+
+        time.sleep(1)
+
+        final_roll = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/button")
+        final_roll.click()
+        print("Clicked Roll Button")
 
         time.sleep(5)
 
-        rain_button = browser.find_element_by_xpath(
-            "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
-        rain_button.click()
-        time.sleep(2)
-        tos_button = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[3]/button[2]")
-        tos_button.click()
-        print("Rain Pool successfully joined")
-    except:
-        print("Error joining Rain Pool - already joined")
+        try:
+            print("Wrong Answer Check...")
+            error = browser.find_element_by_xpath("//*[contains(text(), 'wrong answer')]").is_displayed()
+            #error2 = browser.find_element_by_xpath("//*[contains(text(), 'puzzle expired')]").is_displayed()
+            if error == True: #or error2 == True:
+                print("Captcha Failed - Wrong Answer")
+                print("Retrying in 15 min.")
+                #time.sleep(900)
+                for remaining in range(900, 0, -1):
+                    sys.stdout.write("\r")
+                    sys.stdout.write("{:2d} seconds remaining.".format(remaining))
+                    sys.stdout.flush()
+                    time.sleep(1)
+                sys.stdout.write("\rComplete!            \n")
+                #refresh = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/button")
+                #refresh.click()
+                #browser.refresh
+                #time.sleep(12)
+                browser.get("https://cointiply.com/home?intent=faucet")
 
-    time.sleep(1)
+                time.sleep(3)
 
-    roll_button = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div[1]/div/button")
-    roll_button.click()
-    print("Clicked Roll Button")
+                try:
+                    print("Joining Rain Pool...")
+                    chat_button = browser.find_element_by_xpath(
+                        "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div[1]/div[3]/label")
+                    chat_button.click()
 
-    print("Waiting for Captcha...")
-    time.sleep(10)
+                    time.sleep(5)
 
-    captcha2 = browser.find_element_by_id("adcopy-outer").screenshot("captcha2.png")
-    print("Solving Captcha #2...")
-    img2 = Image.open("captcha2.png")
-    width, height = img2.size
-    img_res2 = img2.crop((0, 130, width, height))
-    img_res2.save("captcha2.png")
+                    rain_button = browser.find_element_by_xpath(
+                        "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
+                    rain_button.click()
+                    time.sleep(2)
+                    tos_button = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[3]/button[2]")
+                    tos_button.click()
+                    print("Rain Pool successfully joined")
+                except:
+                    print("Error joining Rain Pool - already joined")
 
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+                time.sleep(1)
 
-    captcha_string2 = pytesseract.image_to_string("captcha2.png")
-    s = captcha_string2
-    sliced_captcha2 = s[14:]
-    print(sliced_captcha2)
+                # roll_button = browser.find_element_by_class_name("md-ink-ripple").click()
+                roll_button = browser.find_element_by_xpath(
+                    "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div[1]/div/button")
+                roll_button.click()
+                print("Clicked Roll Button")
 
-    pyperclip.copy(sliced_captcha2)
+                print("Waiting for Captcha...")
+                time.sleep(11)
 
-    captcha_field2 = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/input")
-    captcha_field2.click()
-    time.sleep(2)
-    captcha_field2.send_keys(sliced_captcha2)
-    #keyboard.send("ctrl+v")
-    print("Captcha Solved")
+                captcha2 = browser.find_element_by_id("adcopy-outer").screenshot("captcha2.png")
+                print("Solving Captcha #2...")
+                img2 = Image.open("captcha2.png")
+                width, height = img2.size
+                img_res2 = img2.crop((0, 130, width, height))
+                img_res2.save("captcha2.png")
 
-    time.sleep(1)
+                pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
-    final_roll = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/button")
-    final_roll.click()
-    print("Clicked Roll Button")
+                captcha_string2 = pytesseract.image_to_string("captcha2.png")
+                s = captcha_string2
+                sliced_captcha2 = s[14:]
+                print(sliced_captcha2)
+
+                pyperclip.copy(sliced_captcha2)
+
+                captcha_field2 = browser.find_element_by_xpath(
+                    "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/input")
+
+                captcha_field2.click()
+                time.sleep(2)
+
+                captcha_field2.send_keys(sliced_captcha2)
+                #keyboard.send("ctrl+v")
+                print("Captcha Solved")
+
+                time.sleep(2)
+
+                final_roll = browser.find_element_by_xpath(
+                    "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/button")
+                final_roll.click()
+                time.sleep(2)
+                print("Clicked Roll Button")
+        except NoSuchElementException:
+            print("Wrong Answer check passed")
+
+
+        try:
+            print("Invalid Captcha Check...")
+            #error = browser.find_element_by_xpath("//*[contains(text(), 'wrong answer')]").is_displayed()
+            error2 = browser.find_element_by_xpath("//*[contains(text(), 'Invalid captcha response')]").is_displayed()
+            if error2 == True: #or error2 == True:
+                print("Captcha Failed - Invalid captcha response")
+                print("Retrying in 15 min.")
+                #time.sleep(900)
+                for remaining in range(900, 0, -1):
+                    sys.stdout.write("\r")
+                    sys.stdout.write("{:2d} seconds remaining.".format(remaining))
+                    sys.stdout.flush()
+                    time.sleep(1)
+                sys.stdout.write("\rComplete!            \n")
+                #refresh = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/button")
+                #refresh.click()
+                #time.sleep(12)
+                #browser.refresh()
+                browser.get("https://cointiply.com/home?intent=faucet")
+
+                time.sleep(3)
+
+                try:
+                    print("Joining Rain Pool...")
+                    chat_button = browser.find_element_by_xpath(
+                        "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div[1]/div[3]/label")
+                    chat_button.click()
+
+                    time.sleep(5)
+
+                    rain_button = browser.find_element_by_xpath(
+                        "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
+                    rain_button.click()
+                    time.sleep(2)
+                    tos_button = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[3]/button[2]")
+                    tos_button.click()
+                    print("Rain Pool successfully joined")
+                except:
+                    print("Error joining Rain Pool - already joined")
+
+                time.sleep(1)
+
+                # roll_button = browser.find_element_by_class_name("md-ink-ripple").click()
+                roll_button = browser.find_element_by_xpath(
+                    "/html/body/div/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div[1]/div/button")
+                roll_button.click()
+                print("Clicked Roll Button")
+
+                print("Waiting for Captcha...")
+                time.sleep(11)
+
+                captcha2 = browser.find_element_by_id("adcopy-outer").screenshot("captcha2.png")
+                print("Solving Captcha #2...")
+                img2 = Image.open("captcha2.png")
+                width, height = img2.size
+                img_res2 = img2.crop((0, 130, width, height))
+                img_res2.save("captcha2.png")
+
+                pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+
+                captcha_string2 = pytesseract.image_to_string("captcha2.png")
+                s = captcha_string2
+                sliced_captcha2 = s[14:]
+                print(sliced_captcha2)
+
+                pyperclip.copy(sliced_captcha2)
+
+                captcha_field2 = browser.find_element_by_xpath(
+                    "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/input")
+
+                captcha_field2.click()
+                time.sleep(2)
+
+                captcha_field2.send_keys(sliced_captcha2)
+                #keyboard.send("ctrl+v")
+                print("Captcha Solved")
+
+                time.sleep(2)
+
+                final_roll = browser.find_element_by_xpath(
+                    "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/button")
+                final_roll.click()
+                time.sleep(2)
+                print("Clicked Roll Button")
+        except NoSuchElementException:
+            print("Invalid Captcha Check Passed")
+
+        try:
+            print("Puzzle Expired Check...")
+            #error = browser.find_element_by_xpath("//*[contains(text(), 'wrong answer')]").is_displayed()
+            error2 = browser.find_element_by_xpath("//*[contains(text(), 'puzzle expired')]").is_displayed()
+            if error2 == True: #or error2 == True:
+                print("Captcha Failed - Puzzle Expired")
+                print("Retrying in 15 min.")
+                #time.sleep(900)
+                for remaining in range(900, 0, -1):
+                    sys.stdout.write("\r")
+                    sys.stdout.write("{:2d} seconds remaining.".format(remaining))
+                    sys.stdout.flush()
+                    time.sleep(1)
+                sys.stdout.write("\rComplete!            \n")
+                #refresh = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/button")
+                #refresh.click()
+                #time.sleep(12)
+                #browser.refresh()
+                browser.get("https://cointiply.com/home?intent=faucet")
+
+                time.sleep(3)
+
+                try:
+                    print("Joining Rain Pool...")
+                    chat_button = browser.find_element_by_xpath(
+                        "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div[1]/div[3]/label")
+                    chat_button.click()
+
+                    time.sleep(5)
+
+                    rain_button = browser.find_element_by_xpath(
+                        "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
+                    rain_button.click()
+                    time.sleep(2)
+                    tos_button = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[3]/button[2]")
+                    tos_button.click()
+                    print("Rain Pool successfully joined")
+                except:
+                    print("Error joining Rain Pool - already joined")
+
+                time.sleep(1)
+
+                # roll_button = browser.find_element_by_class_name("md-ink-ripple").click()
+                roll_button = browser.find_element_by_xpath(
+                    "/html/body/div/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div[1]/div/button")
+                roll_button.click()
+                print("Clicked Roll Button")
+
+                print("Waiting for Captcha...")
+                time.sleep(11)
+
+                captcha2 = browser.find_element_by_id("adcopy-outer").screenshot("captcha2.png")
+                print("Solving Captcha #2...")
+                img2 = Image.open("captcha2.png")
+                width, height = img2.size
+                img_res2 = img2.crop((0, 130, width, height))
+                img_res2.save("captcha2.png")
+
+                pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+
+                captcha_string2 = pytesseract.image_to_string("captcha2.png")
+                s = captcha_string2
+                sliced_captcha2 = s[14:]
+                print(sliced_captcha2)
+
+                pyperclip.copy(sliced_captcha2)
+
+                captcha_field2 = browser.find_element_by_xpath(
+                    "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/input")
+
+                captcha_field2.click()
+                time.sleep(2)
+
+                captcha_field2.send_keys(sliced_captcha2)
+                #keyboard.send("ctrl+v")
+                print("Captcha Solved")
+
+                time.sleep(2)
+
+                final_roll = browser.find_element_by_xpath(
+                    "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/button")
+                final_roll.click()
+                time.sleep(2)
+                print("Clicked Roll Button")
+        except NoSuchElementException:
+            print("Puzzle Expired Check Passed")
+
+        try:
+            print("Joining Rain Pool...")
+            chat_button = browser.find_element_by_xpath(
+                "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div[1]/div[3]/label")
+            chat_button.click()
+
+            time.sleep(5)
+
+            rain_button = browser.find_element_by_xpath(
+                "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
+            rain_button.click()
+            time.sleep(2)
+            tos_button = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[3]/button[2]")
+            tos_button.click()
+            print("Rain Pool successfully joined")
+        except:
+            print("Error joining Rain Pool - already joined")
 
     time.sleep(5)
 
-    try:
-        print("Wrong Answer Check...")
-        error = browser.find_element_by_xpath("//*[contains(text(), 'wrong answer')]").is_displayed()
-        #error2 = browser.find_element_by_xpath("//*[contains(text(), 'puzzle expired')]").is_displayed()
-        if error == True: #or error2 == True:
-            print("Captcha Failed - Wrong Answer")
-            print("Retrying in 15 min.")
-            #time.sleep(900)
-            for remaining in range(900, 0, -1):
+    first_check = 0
+    browser.get("https://cointiply.com/ptc")
+    print("Navigating to PTC Ads")
+    time.sleep(2)
+    total_timer = 0
+
+    while ads_remaining == True and total_timer < 3600:
+        captcha_attempt = 0
+
+        ptc_very_human = randrange(300)
+        print("Randomizing PTC wait time: " + str(ptc_very_human) + " seconds")
+        for remaining in range(ptc_very_human, 0, -1):
+            sys.stdout.write("\r")
+            sys.stdout.write("{:2d} seconds remaining.".format(remaining))
+            sys.stdout.flush()
+            time.sleep(1)
+        sys.stdout.write("\rComplete!            \n")
+
+        total_timer += ptc_very_human
+
+        try:
+            print("Joining Rain Pool...")
+            chat_button = browser.find_element_by_xpath(
+                "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div[1]/div[3]/label")
+            chat_button.click()
+
+            time.sleep(5)
+
+            rain_button = browser.find_element_by_xpath(
+                "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
+            rain_button.click()
+            time.sleep(2)
+            tos_button = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[3]/button[2]")
+            tos_button.click()
+            print("Rain Pool successfully joined")
+        except:
+            print("Error joining Rain Pool - already joined")
+
+        try:
+            PTC_Button = browser.find_element_by_xpath(
+                "/html/body/div/div/div[4]/div/div/div[2]/div[1]/div/div[1]/div[3]/button")
+            PTC_Button.click()
+            print("Loading top paying ad")
+
+            ad = browser.window_handles[1]
+            browser.switch_to_window(ad)
+            print("Focused on ad window")
+
+            for remaining in range(20, 0, -1):
                 sys.stdout.write("\r")
-                sys.stdout.write("{:2d} seconds remaining.".format(remaining))
+                sys.stdout.write("Viewing ad: {:2d} seconds remaining".format(remaining))
                 sys.stdout.flush()
                 time.sleep(1)
-            sys.stdout.write("\rComplete!            \n")
-            #refresh = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/button")
-            #refresh.click()
-            #browser.refresh
-            #time.sleep(12)
-            browser.get("https://cointiply.com/home?intent=faucet")
 
-            time.sleep(3)
+            sys.stdout.write("\rAd view timer complete!            \n")
+            total_timer += 20
+            # time.sleep(60)
+            # browser.close()
+            # print("Closing ad")
+            ads_viewed += 1
+            ad_complete = True
+            ptc_main = browser.window_handles[0]
 
-            try:
-                print("Joining Rain Pool...")
-                chat_button = browser.find_element_by_xpath(
-                    "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div[1]/div[3]/label")
-                chat_button.click()
-
-                time.sleep(5)
-
-                rain_button = browser.find_element_by_xpath(
-                    "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
-                rain_button.click()
-                time.sleep(2)
-                tos_button = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[3]/button[2]")
-                tos_button.click()
-                print("Rain Pool successfully joined")
-            except:
-                print("Error joining Rain Pool - already joined")
-
-            time.sleep(1)
-
-            # roll_button = browser.find_element_by_class_name("md-ink-ripple").click()
-            roll_button = browser.find_element_by_xpath(
-                "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div[1]/div/button")
-            roll_button.click()
-            print("Clicked Roll Button")
-
-            print("Waiting for Captcha...")
-            time.sleep(11)
-
-            captcha2 = browser.find_element_by_id("adcopy-outer").screenshot("captcha2.png")
-            print("Solving Captcha #2...")
-            img2 = Image.open("captcha2.png")
-            width, height = img2.size
-            img_res2 = img2.crop((0, 130, width, height))
-            img_res2.save("captcha2.png")
-
-            pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
-
-            captcha_string2 = pytesseract.image_to_string("captcha2.png")
-            s = captcha_string2
-            sliced_captcha2 = s[14:]
-            print(sliced_captcha2)
-
-            pyperclip.copy(sliced_captcha2)
-
-            captcha_field2 = browser.find_element_by_xpath(
-                "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/input")
-
-            captcha_field2.click()
-            time.sleep(2)
-
-            captcha_field2.send_keys(sliced_captcha2)
-            #keyboard.send("ctrl+v")
-            print("Captcha Solved")
-
-            time.sleep(2)
-
-            final_roll = browser.find_element_by_xpath(
-                "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/button")
-            final_roll.click()
-            time.sleep(2)
-            print("Clicked Roll Button")
-    except NoSuchElementException:
-        print("Wrong Answer check passed")
-
-
-    try:
-        print("Invalid Captcha Check...")
-        #error = browser.find_element_by_xpath("//*[contains(text(), 'wrong answer')]").is_displayed()
-        error2 = browser.find_element_by_xpath("//*[contains(text(), 'Invalid captcha response')]").is_displayed()
-        if error2 == True: #or error2 == True:
-            print("Captcha Failed - Invalid captcha response")
-            print("Retrying in 15 min.")
-            #time.sleep(900)
-            for remaining in range(900, 0, -1):
-                sys.stdout.write("\r")
-                sys.stdout.write("{:2d} seconds remaining.".format(remaining))
-                sys.stdout.flush()
+            while ad_complete == True:
+                browser.switch_to_window(ptc_main)
                 time.sleep(1)
-            sys.stdout.write("\rComplete!            \n")
-            #refresh = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/button")
-            #refresh.click()
-            #time.sleep(12)
-            #browser.refresh()
-            browser.get("https://cointiply.com/home?intent=faucet")
+                total_timer += 1
+                print("Saving Captcha images")
 
-            time.sleep(3)
+                try:
+                    ptc_captcha1 = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[2]/div[1]/img[1]")
+                    ptc_captcha1.screenshot("ptc_captcha1.png")
+                    ptc_captcha2 = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[2]/div[1]/img[2]")
+                    ptc_captcha2.screenshot("ptc_captcha2.png")
+                    ptc_captcha3 = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[2]/div[1]/img[3]")
+                    ptc_captcha3.screenshot("ptc_captcha3.png")
+                    ptc_captcha4 = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[2]/div[1]/img[4]")
+                    ptc_captcha4.screenshot("ptc_captcha4.png")
+                    ptc_captcha5 = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[2]/div[1]/img[5]")
+                    ptc_captcha5.screenshot("ptc_captcha5.png")
 
-            try:
-                print("Joining Rain Pool...")
-                chat_button = browser.find_element_by_xpath(
-                    "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div[1]/div[3]/label")
-                chat_button.click()
+                except:
+                    try:
+                        print("Reduced captcha count detected")
+                        ptc_captcha1 = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[2]/div[1]/img[1]")
+                        ptc_captcha1.screenshot("ptc_captcha1.png")
+                        ptc_captcha2 = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[2]/div[1]/img[2]")
+                        ptc_captcha2.screenshot("ptc_captcha2.png")
+                        ptc_captcha3 = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[2]/div[1]/img[3]")
+                        ptc_captcha3.screenshot("ptc_captcha3.png")
+                        ptc_captcha4 = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[2]/div[1]/img[4]")
+                        ptc_captcha4.screenshot("ptc_captcha4.png")
+                        ptc_reduced = True
+                    except:
+                        try:
+                            browser.switch_to_window(ad)
+                            time.sleep(10)
+                            browser.switch_to_window(ptc_main)
+                            time.sleep(1)
+                            ptc_early += 1
 
-                time.sleep(5)
+                            if ptc_early <= 2:
+                                continue
+                            if ptc_early == 3:
+                                ptc_early = 0
+                                ad_complete = False
 
-                rain_button = browser.find_element_by_xpath(
-                    "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
-                rain_button.click()
-                time.sleep(2)
-                tos_button = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[3]/button[2]")
-                tos_button.click()
-                print("Rain Pool successfully joined")
-            except:
-                print("Error joining Rain Pool - already joined")
+                            ad_complete = False
+                            skip_ad = browser.find_element_by_xpath(
+                                "/html/body/div/div/div[4]/div/div/div[2]/div[1]/div/div[2]/div/div/div[3]/button")
+                            skip_ad.click()
+                            print("Ad timeout error")
+                            print("Skipping ad")
+                            browser.switch_to_window(ad)
+                            browser.close()
+                            browser.switch_to_window(ptc_main)
+                            time.sleep(1)
+                            browser.get("https://cointiply.com/ptc")
+                            time.sleep(1)
+                            ptc_early = 0
+                            continue
+                        except:
+                            print("Unknown Error")
+                            ad_complete = False
+                            browser.switch_to_window(ad)
+                            browser.close()
+                            browser.switch_to_window(ptc_main)
+                            browser.get("https://cointiply.com/ptc")
+                            ptc_early = 0
+                            continue
 
-            time.sleep(1)
+                ptc_captcha_string = browser.find_elements_by_xpath("//*[contains(text(), 'Select:')]")
+                ptc_text = ptc_captcha_string[0].text
+                ptc_text = ptc_text.replace("Select: ", "")
+                print(ptc_text)
 
-            # roll_button = browser.find_element_by_class_name("md-ink-ripple").click()
-            roll_button = browser.find_element_by_xpath(
-                "/html/body/div/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div[1]/div/button")
-            roll_button.click()
-            print("Clicked Roll Button")
+                ptc_captcha_db = cv2.imread("captcha/" + ptc_text + ".png")
 
-            print("Waiting for Captcha...")
-            time.sleep(11)
+                ptc_no = 1
+                # current_ptc_captcha = "ptc_captcha"+ str(ptc_no) +".png"
+                ptc_captcha1_png = cv2.imread("ptc_captcha1.png")
+                ptc_captcha2_png = cv2.imread("ptc_captcha2.png")
+                ptc_captcha3_png = cv2.imread("ptc_captcha3.png")
+                ptc_captcha4_png = cv2.imread("ptc_captcha4.png")
+                try:
+                    ptc_captcha5_png = cv2.imread("ptc_captcha5.png")
+                except:
+                    pass
 
-            captcha2 = browser.find_element_by_id("adcopy-outer").screenshot("captcha2.png")
-            print("Solving Captcha #2...")
-            img2 = Image.open("captcha2.png")
-            width, height = img2.size
-            img_res2 = img2.crop((0, 130, width, height))
-            img_res2.save("captcha2.png")
+                try:
+                    if ptc_no == 1:
+                        imageA = cv2.imread("captcha/" + ptc_text + ".png")
+                        imageB = cv2.imread("ptc_captcha1.png")
+                        grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
+                        grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)
+                        (score, diff) = structural_similarity(grayA, grayB, full=True)
+                        diff = (diff * 255).astype("uint8")
+                        print("Captcha 1 SSIM: {}".format(score))
+                        ptc_ssim1 = score
+                        ptc_no += 1
 
-            pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+                    if ptc_no == 2:
+                        imageA = cv2.imread("captcha/" + ptc_text + ".png")
+                        imageB = cv2.imread("ptc_captcha2.png")
+                        grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
+                        grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)
+                        (score, diff) = structural_similarity(grayA, grayB, full=True)
+                        diff = (diff * 255).astype("uint8")
+                        print("Captcha 2 SSIM: {}".format(score))
+                        ptc_ssim2 = score
+                        ptc_no += 1
 
-            captcha_string2 = pytesseract.image_to_string("captcha2.png")
-            s = captcha_string2
-            sliced_captcha2 = s[14:]
-            print(sliced_captcha2)
+                    if ptc_no == 3:
+                        imageA = cv2.imread("captcha/" + ptc_text + ".png")
+                        imageB = cv2.imread("ptc_captcha3.png")
+                        grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
+                        grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)
+                        (score, diff) = structural_similarity(grayA, grayB, full=True)
+                        diff = (diff * 255).astype("uint8")
+                        print("Captcha 3 SSIM: {}".format(score))
+                        ptc_ssim3 = score
+                        ptc_no += 1
 
-            pyperclip.copy(sliced_captcha2)
+                    if ptc_no == 4:
+                        imageA = cv2.imread("captcha/" + ptc_text + ".png")
+                        imageB = cv2.imread("ptc_captcha4.png")
+                        grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
+                        grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)
+                        (score, diff) = structural_similarity(grayA, grayB, full=True)
+                        diff = (diff * 255).astype("uint8")
+                        print("Captcha 4 SSIM: {}".format(score))
+                        ptc_ssim4 = score
+                        if ptc_reduced == False:
+                            ptc_no += 1
 
-            captcha_field2 = browser.find_element_by_xpath(
-                "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/input")
+                    if ptc_no == 5:
+                        imageA = cv2.imread("captcha/" + ptc_text + ".png")
+                        imageB = cv2.imread("ptc_captcha5.png")
+                        grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
+                        grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)
+                        (score, diff) = structural_similarity(grayA, grayB, full=True)
+                        diff = (diff * 255).astype("uint8")
+                        print("Captcha 5 SSIM: {}".format(score))
+                        ptc_ssim5 = score
+                        ptc_no += 1
 
-            captcha_field2.click()
-            time.sleep(2)
+                    ssim_total = set([ptc_ssim1, ptc_ssim2, ptc_ssim3, ptc_ssim4, ptc_ssim5])
+                    ssim_match = MAX(ssim_total)
 
-            captcha_field2.send_keys(sliced_captcha2)
-            #keyboard.send("ctrl+v")
-            print("Captcha Solved")
-
-            time.sleep(2)
-
-            final_roll = browser.find_element_by_xpath(
-                "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/button")
-            final_roll.click()
-            time.sleep(2)
-            print("Clicked Roll Button")
-    except NoSuchElementException:
-        print("Invalid Captcha Check Passed")
-
-    try:
-        print("Puzzle Expired Check...")
-        #error = browser.find_element_by_xpath("//*[contains(text(), 'wrong answer')]").is_displayed()
-        error2 = browser.find_element_by_xpath("//*[contains(text(), 'puzzle expired')]").is_displayed()
-        if error2 == True: #or error2 == True:
-            print("Captcha Failed - Puzzle Expired")
-            print("Retrying in 15 min.")
-            #time.sleep(900)
-            for remaining in range(900, 0, -1):
-                sys.stdout.write("\r")
-                sys.stdout.write("{:2d} seconds remaining.".format(remaining))
-                sys.stdout.flush()
-                time.sleep(1)
-            sys.stdout.write("\rComplete!            \n")
-            #refresh = browser.find_element_by_xpath("/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/button")
-            #refresh.click()
-            #time.sleep(12)
-            #browser.refresh()
-            browser.get("https://cointiply.com/home?intent=faucet")
-
-            time.sleep(3)
-
-            try:
-                print("Joining Rain Pool...")
-                chat_button = browser.find_element_by_xpath(
-                    "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div[1]/div[3]/label")
-                chat_button.click()
-
-                time.sleep(5)
-
-                rain_button = browser.find_element_by_xpath(
-                    "/html/body/div/div/div[4]/div/div/div[1]/div[4]/div[2]/div/div[2]/div/label[2]")
-                rain_button.click()
-                time.sleep(2)
-                tos_button = browser.find_element_by_xpath("/html/body/div[2]/div[1]/div[3]/button[2]")
-                tos_button.click()
-                print("Rain Pool successfully joined")
-            except:
-                print("Error joining Rain Pool - already joined")
-
-            time.sleep(1)
-
-            # roll_button = browser.find_element_by_class_name("md-ink-ripple").click()
-            roll_button = browser.find_element_by_xpath(
-                "/html/body/div/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div[1]/div/button")
-            roll_button.click()
-            print("Clicked Roll Button")
-
-            print("Waiting for Captcha...")
-            time.sleep(11)
-
-            captcha2 = browser.find_element_by_id("adcopy-outer").screenshot("captcha2.png")
-            print("Solving Captcha #2...")
-            img2 = Image.open("captcha2.png")
-            width, height = img2.size
-            img_res2 = img2.crop((0, 130, width, height))
-            img_res2.save("captcha2.png")
-
-            pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
-
-            captcha_string2 = pytesseract.image_to_string("captcha2.png")
-            s = captcha_string2
-            sliced_captcha2 = s[14:]
-            print(sliced_captcha2)
-
-            pyperclip.copy(sliced_captcha2)
-
-            captcha_field2 = browser.find_element_by_xpath(
-                "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/div[3]/div[2]/div[2]/input")
-
-            captcha_field2.click()
-            time.sleep(2)
-
-            captcha_field2.send_keys(sliced_captcha2)
-            #keyboard.send("ctrl+v")
-            print("Captcha Solved")
-
-            time.sleep(2)
-
-            final_roll = browser.find_element_by_xpath(
-                "/html/body/div[1]/div/div[4]/div/div/div[2]/div[1]/div[1]/div[1]/div/div/div/button")
-            final_roll.click()
-            time.sleep(2)
-            print("Clicked Roll Button")
-    except NoSuchElementException:
-        print("Puzzle Expired Check Passed")
-
-
-
+                    if ssim_match == ptc_ssim1:
+                        ptc_captcha1.click()
+                        print("Captcha 1 is the closest match")
+                        time.sleep(1)
+                        ptc_reduced = False
+                        browser.switch_to_window(ad)
+                        browser.close()
+                        browser.switch_to_window(ptc_main)
+                        print("Closing ad")
+                        ad_complete = False
+                        time.sleep(2)
+                        total_timer += 3
+                    elif ssim_match == ptc_ssim2:
+                        ptc_captcha2.click()
+                        print("Captcha 2 is the closest match")
+                        time.sleep(1)
+                        ptc_reduced = False
+                        browser.switch_to_window(ad)
+                        browser.close()
+                        browser.switch_to_window(ptc_main)
+                        print("Closing ad")
+                        ad_complete = False
+                        time.sleep(2)
+                        total_timer += 3
+                    elif ssim_match == ptc_ssim3:
+                        ptc_captcha3.click()
+                        print("Captcha 3 is the closest match")
+                        time.sleep(1)
+                        ptc_reduced = False
+                        browser.switch_to_window(ad)
+                        browser.close()
+                        browser.switch_to_window(ptc_main)
+                        print("Closing ad")
+                        ad_complete = False
+                        time.sleep(2)
+                        total_timer += 3
+                    elif ssim_match == ptc_ssim4:
+                        ptc_captcha4.click()
+                        print("Captcha 4 is the closest match")
+                        time.sleep(1)
+                        ptc_reduced = False
+                        browser.switch_to_window(ad)
+                        browser.close()
+                        browser.switch_to_window(ptc_main)
+                        print("Closing ad")
+                        ad_complete = False
+                        time.sleep(2)
+                        total_timer += 3
+                    elif ssim_match == ptc_ssim5:
+                        ptc_captcha5.click()
+                        print("Captcha 5 is the closest match")
+                        time.sleep(1)
+                        browser.switch_to_window(ad)
+                        browser.close()
+                        browser.switch_to_window(ptc_main)
+                        print("Closing ad")
+                        ad_complete = False
+                        time.sleep(2)
+                        total_timer += 3
+                except:
+                    print("PTC Captcha failed")
+                    print(Exception)
+                    browser.switch_to_window(ad)
+                    browser.close()
+                    browser.switch_to_window(ptc_main)
+        except:
+            print("No ads remaining")
+            print(Exception)
+            ads_remaining = False
