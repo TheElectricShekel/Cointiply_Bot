@@ -26,13 +26,13 @@ Install tesseract-ocr-w64-setup-v5.0.0-alpha.20201127<br>
 	- Unzip included zip files for installer or download here: https://github.com/UB-Mannheim/tesseract/wiki<br>
 	- Set the install dir to: C:\Program Files\Tesseract-OCR<br>
 
-Run 'Cointiply_Bot.exe'
+Run 'Cointiply_Bot.exe'<br>
 	- Make sure you have clicked the verification link in your e-mail<br>
 	- Run the bot<br>
 	- You can minimize the bot while it runs<br>
 	- Make sure the captcha folder is in the same folder as the Cointiply_Bot.exe
 
-Troubleshooting:
+Troubleshooting:<br>
 	- Issues have occurred if the browser is maximized/minimized while the bot is trying to solve a captcha.<br>
 	- If the bot begins failing SolveMedia captchas, it's because the captcha type has changed from the loading bar at the bottom<br>
 	  to colorized text.  Close the bot for 15-60min and restart it if this happens and the built in captcha checks do not fix it automatically.<br>
