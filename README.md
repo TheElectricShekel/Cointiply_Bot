@@ -12,6 +12,7 @@ The browser will need to stay open due to the manner in which the captchas are s
 	Cointiply_Bot_v1.06.zip.002<br>
 	Cointiply_Bot_v1.06.zip.003<br>
 	Cointiply_Bot_v1.06.zip.004<br>
+	Cointiply_Bot_v1.06.zip.005<br>
 
 **In order to run the bot do the following:**
 
