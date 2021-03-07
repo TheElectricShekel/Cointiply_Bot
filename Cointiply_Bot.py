@@ -16,11 +16,17 @@ from skimage.metrics import structural_similarity
 import argparse
 import imutils
 
+
 def MAX(ssim_total):
     return (max(ssim_total))
 
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 credentials = "creds.txt"
+
+tessdata_dir_config = '--tessdata-dir "C:\\Program Files\\Tesseract-OCR\\tessdata"'
+
+pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 driver_path = "chromedriver.exe"
 brave_path = "C:/Program Files/Google/Chrome/Application/chrome.exe"
@@ -73,7 +79,7 @@ img_res.save("captcha.png")
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
-captcha_string = pytesseract.image_to_string("captcha.png")
+captcha_string = pytesseract.image_to_string("captcha.png", config=tessdata_dir_config)
 s = captcha_string
 sliced_captcha = s[14:]
 print(sliced_captcha)
@@ -142,7 +148,7 @@ try:
 
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
-    captcha_string2 = pytesseract.image_to_string("captcha2.png")
+    captcha_string2 = pytesseract.image_to_string("captcha2.png", config=tessdata_dir_config)
     s = captcha_string2
     sliced_captcha2 = s[14:]
     print(sliced_captcha2)
@@ -252,9 +258,9 @@ while True:
         img_res2 = img2.crop((0, 130, width, height))
         img_res2.save("captcha2.png")
 
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+        #pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
-        captcha_string2 = pytesseract.image_to_string("captcha2.png")
+        captcha_string2 = pytesseract.image_to_string("captcha2.png", config=tessdata_dir_config)
         s = captcha_string2
         sliced_captcha2 = s[14:]
         print(sliced_captcha2)
@@ -336,7 +342,7 @@ while True:
 
                 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
-                captcha_string2 = pytesseract.image_to_string("captcha2.png")
+                captcha_string2 = pytesseract.image_to_string("captcha2.png", config=tessdata_dir_config)
                 s = captcha_string2
                 sliced_captcha2 = s[14:]
                 print(sliced_captcha2)
@@ -424,7 +430,7 @@ while True:
 
                 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
-                captcha_string2 = pytesseract.image_to_string("captcha2.png")
+                captcha_string2 = pytesseract.image_to_string("captcha2.png", config=tessdata_dir_config)
                 s = captcha_string2
                 sliced_captcha2 = s[14:]
                 print(sliced_captcha2)
@@ -511,7 +517,7 @@ while True:
 
                 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
-                captcha_string2 = pytesseract.image_to_string("captcha2.png")
+                captcha_string2 = pytesseract.image_to_string("captcha2.png", config=tessdata_dir_config)
                 s = captcha_string2
                 sliced_captcha2 = s[14:]
                 print(sliced_captcha2)
