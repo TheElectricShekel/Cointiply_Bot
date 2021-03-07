@@ -1,12 +1,6 @@
 # Cointiply_Bot
 This bot will log into Cointiply.com, join the rain pool for additional coins, activate the faucet, and complete all of the PTC ad offers.   During the faucet cooldown, the bot will complete all of the PTC ad offers and will check to rejoin the rain pool. The browser will need to stay open due to the manner in which the captchas are solved, but can be minimized (RBTray or another hide to tray program is great for keeping it out of the way).
 
-**Cointiply_Bot**
-
-This bot will log into Cointiply.com, join the rain pool for additional coins and activate the faucet.  
-During the faucet cooldown, the bot will periodically check to see if the rain pool has ended, and will rejoin.
-The browser will need to stay open due to the manner in which the captchas are solved, but can be minimized
-
 ***Due to the 25MB upload limit on github, the Windows standalone must be unzipped from the following parts:***<br>
 	Cointiply_Bot_v1.06.zip.001<br>
 	Cointiply_Bot_v1.06.zip.002<br>
