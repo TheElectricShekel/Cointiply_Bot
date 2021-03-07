@@ -8,16 +8,16 @@ During the faucet cooldown, the bot will periodically check to see if the rain p
 The browser will need to stay open due to the manner in which the captchas are solved, but can be minimized
 
 ***Due to the 25MB upload limit on github, the Windows standalone must be unzipped from the following parts:***<br>
-	~~Cointiply_Bot_v1.05.zip.001<br>
-	Cointiply_Bot_v1.05.zip.002<br>
-	Cointiply_Bot_v1.05.zip.003<br>
-	Cointiply_Bot_v1.05.zip.004<br>~~
-	Due to conflicts with pyinstaller, the .exe is currently not working.<br>
-	Please run the .py for now, the next update will fix this issue.
+	Cointiply_Bot_v1.06.zip.001<br>
+	Cointiply_Bot_v1.06.zip.002<br>
+	Cointiply_Bot_v1.06.zip.003<br>
+	Cointiply_Bot_v1.06.zip.004<br>
 
 **In order to run the bot do the following:**
 
 Register at: http://cointiply.com/r/EPMAA
+
+Ensure Chrome is installed (C:/Program Files/Google/Chrome/Application/chrome.exe)
 
 Open 'creds.txt'<br>
 	- The formatting is very important in this document<br>
